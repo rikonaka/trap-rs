@@ -15,7 +15,7 @@ use tracing::info;
 use tracing::warn;
 use tracing_subscriber::FmtSubscriber;
 
-/// pistol and nmap scan test software.
+/// Scan test software.
 #[derive(Parser, Debug)]
 #[command(author = "RikoNaka", version, about, long_about = None)]
 struct Args {
@@ -72,7 +72,7 @@ fn handle_client(mut stream: TcpStream) {
                 }
 
                 // if let Err(e) = stream.write_all(&buf[0..recv_size]) {
-                //     eprintln!("发送响应失败: {}", e);
+                //     eprintln!("send packet failed: {}", e);
                 // }
             } else {
                 warn!("tcp message len is 0");
