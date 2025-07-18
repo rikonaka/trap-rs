@@ -148,21 +148,23 @@ fn udp_listener<'a>(addr: IpAddr, port: u16, need_return: String) -> Result<()> 
                             info!("udp from {}: [{}]", src_addr, hex_str);
                         }
                     }
-                    if need_return != "null" {
-                        if need_return.len() > 0 {
-                            match socket.send_to(need_return.as_bytes(), src_addr) {
-                                Ok(_send_size) => (),
-                                Err(e) => error!("send back data failed: {}", e),
-                            };
-                        } else {
-                            match socket.send_to(&buf[0..recv_size], src_addr) {
-                                Ok(_send_size) => (),
-                                Err(e) => error!("send back data failed: {}", e),
-                            };
-                        }
-                    }
                 } else {
                     warn!("udp from {}, but data len is 0", src_addr);
+                }
+
+                if need_return != "null" {
+                    info!("return udp data [{}] to {}", need_return, src_addr);
+                    if need_return.len() > 0 {
+                        match socket.send_to(need_return.as_bytes(), src_addr) {
+                            Ok(_send_size) => (),
+                            Err(e) => error!("send back data failed: {}", e),
+                        };
+                    } else {
+                        match socket.send_to(&buf[0..recv_size], src_addr) {
+                            Ok(_send_size) => (),
+                            Err(e) => error!("send back data failed: {}", e),
+                        };
+                    }
                 }
             }
             Err(e) => {
