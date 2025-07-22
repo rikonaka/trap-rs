@@ -55,7 +55,7 @@ fn port_parser(input: &str) -> Result<Vec<u16>> {
     }
 }
 
-fn init_log_level(level: Level) {
+fn set_log_level(level: Level) {
     let subscriber = FmtSubscriber::builder().with_max_level(level).finish();
     tracing::subscriber::set_global_default(subscriber).expect("failed to set subscriber");
 }
@@ -178,12 +178,11 @@ fn udp_listener<'a>(addr: IpAddr, port: u16, need_return: String) -> Result<()> 
             }
         }
     }
-
     Ok(())
 }
 
 fn main() {
-    init_log_level(Level::INFO);
+    set_log_level(Level::INFO);
 
     let args = Args::parse();
     let addr: IpAddr = args
