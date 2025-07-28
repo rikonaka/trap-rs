@@ -3,7 +3,6 @@ use clap::Parser;
 use std::io::ErrorKind;
 use std::io::Read;
 use std::io::Write;
-// use std::io::Write;
 use std::net::IpAddr;
 use std::net::SocketAddr;
 use std::net::TcpListener;
