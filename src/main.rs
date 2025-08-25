@@ -41,6 +41,32 @@ fn port_parser(input: &str) -> Result<Vec<u16>> {
         let input_split: Vec<&str> = input.split(",").map(|x| x.trim()).collect();
         let mut ports = Vec::new();
         for s in input_split {
+            if s.contains("-") {
+                let range_split: Vec<&str> = s
+                    .split("-")
+                    .map(|x| x.trim())
+                    .filter(|x| x.len() > 0)
+                    .collect();
+
+                if range_split.len() >= 2 {
+                    let start: u16 = range_split[0]
+                        .parse()
+                        .expect(&format!("can not parse {} into usize", range_split[0]));
+                    let end: u16 = range_split[1]
+                        .parse()
+                        .expect(&format!("can not parse {} into usize", range_split[1]));
+
+                    if start < end {
+                        for p in start..=end {
+                            ports.push(p);
+                        }
+                    } else {
+                        panic!("start value {} >= end value {}", start, end);
+                    }
+                } else {
+                    panic!("range not enough: {}", s);
+                }
+            }
             let port: u16 = s.parse()?;
             if !ports.contains(&port) {
                 // unique
@@ -102,7 +128,7 @@ fn handle_client<'a>(mut stream: TcpStream, need_return: String) -> Result<()> {
 }
 
 fn tcp_listener(addr: IpAddr, port: u16, need_return: String) -> Result<()> {
-    info!("start tcp listener");
+    info!("start tcp listener at {}:{}", addr, port);
     let socket_addr = SocketAddr::new(addr, port);
     let listener = TcpListener::bind(socket_addr)?;
 
@@ -125,7 +151,7 @@ fn tcp_listener(addr: IpAddr, port: u16, need_return: String) -> Result<()> {
 }
 
 fn udp_listener<'a>(addr: IpAddr, port: u16, need_return: String) -> Result<()> {
-    info!("start udp listener");
+    info!("start udp listener at {}:{}", addr, port);
     let socket_addr = SocketAddr::new(addr, port);
     let socket = UdpSocket::bind(socket_addr)?;
     let mut buf = vec![0; 4096];
